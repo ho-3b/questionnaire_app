@@ -4,7 +4,7 @@ class Administrator < ApplicationRecord
   # 管理者は既存の管理者ユーザーによる招待制
   # メールアドレスのみで作成でき、認証メールのリンクでパスワードを設定する
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :confirmable
   VALID_PASSWORD_REGEX = /\A^[a-zA-Z0-9!-\/:-@¥\[-`{-~]+\z/
 
   attr_accessor :current_password, :new_password, :new_password_confirmation, :role_ids
@@ -37,12 +37,6 @@ class Administrator < ApplicationRecord
   validates :email, presence: true, on: :session
   validates :password, presence: true, on: :session
 
-  def current_password_correct
-    unless valid_password?(self.current_password)
-      errors.add(:current_password, 'の値が不正です')
-    end
-  end
-
   def authenticate
     result = if valid?(:session)
                resource = Administrator.find_by(email: email)
@@ -72,4 +66,11 @@ class Administrator < ApplicationRecord
     self.password = self.new_password
     save!(validate: false)
   end
+
+  private
+    def current_password_correct
+      unless valid_password?(self.current_password)
+        errors.add(:current_password, :invalid)
+      end
+    end
 end
