@@ -13,13 +13,13 @@ default: &default
   adapter: mysql2
   encoding: utf8mb4
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  password: <%= Rails.application.credentials.dig(:db, :password) %>
+  username: root
+  password:
+  host: localhost
 
 development:
   <<: *default
-  username: root
-  host: db
-  database: questionnaire
+  database: app_development
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
